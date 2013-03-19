@@ -1,7 +1,12 @@
 
-class CommandPresenceFeatureVector(object):
+import sys
+
+from .parse import *
+
+class CommandIndicatorFeatureVector(object):
     
-    def __init__(self, query):
+    def __init__(self, n, query):
+        self.sample_number = str(n)
         self.cmd_abstract = 0
         self.cmd_accum = 0
         self.cmd_addcoltotals = 0
@@ -130,25 +135,50 @@ class CommandPresenceFeatureVector(object):
         self.cmd_xmlunescape = 0
         self.cmd_xpath = 0
         self.cmd_xyseries = 0
+        self.nonfeature_attrs = ["cmd_sichart", "cmd_sirare", "cmd_sistats", "cmd_sitimechart", "cmd_sitop", "cmd_kv", "nonfeature_attrs", "extract_features", "sample_number"]
         self.extract_features(query)
 
     def extract_features(self, query):
-        stages = splqueryutils.parse.break_into_stages(query)
+        stages = break_into_stages(query)
+        if len(filter(lambda x: len(x) == 0, stages)) > 0: 
+            return # empty stage means it's an invalid query
         commands = [stage.split()[0] for stage in stages]
         for command in commands:
-            getattr(feature_vector, "cmd_" + command) = 1
+            setattr(self, "cmd_" + command, 1)
         self.collapse_identical_features()
 
     def collapse_identical_features(self):
-        if self.cmd_sichart = 1: self.cmd_chart = 1
-        if self.cmd_sirare = 1: self.cmd_rare = 1
-        if self.cmd_sistats = 1: self.cmd_stats = 1
-        if self.cmd_sitimechart = 1: self.cmd_timechart = 1
-        if self.cmd_sitop = 1: self.cmd_top = 1
-        if self.cmd_kv = 1: self.cmd_extract = 1
+        if self.cmd_sichart == 1: self.cmd_chart = 1
+        if self.cmd_sirare == 1: self.cmd_rare = 1
+        if self.cmd_sistats == 1: self.cmd_stats = 1
+        if self.cmd_sitimechart == 1: self.cmd_timechart = 1
+        if self.cmd_sitop == 1: self.cmd_top = 1
+        if self.cmd_kv == 1: self.cmd_extract = 1
 
-    def output_as_csv(self):
-        for attr in self.__dict__.keys()[:-1]:
-            if not attr in self.redundant_attrs:
-                print attr, ',',
-        print self.__dict__.keys()[-1]
+    def values_as_bit_string(self):
+        feature_attrs = filter(lambda x: x not in self.nonfeature_attrs, self.__dict__.keys())
+        values = [str(getattr(self, attr)) for attr in sorted(feature_attrs)]
+        return ''.join(values)
+
+    def print_csv_header(self):
+        sys.stdout.write('"",') # for the data point ID
+        for attr in sorted(self.__dict__.keys())[:-1]:
+            if not attr in self.nonfeature_attrs:
+                sys.stdout.write('"' + str(attr) + '",')
+        sys.stdout.write('"' + sorted(self.__dict__.keys())[-1] + '"\n')
+    
+    def print_csv_values(self):
+        sys.stdout.write('"' + self.sample_number + '",')
+        for attr in sorted(self.__dict__.keys())[:-1]:
+            if not attr in self.nonfeature_attrs:
+                sys.stdout.write(str(getattr(self, attr)) + ',')
+        sys.stdout.write(str(getattr(self, sorted(self.__dict__.keys())[-1])) + '\n')
+
+    def readable_feature_tuples(self):
+        tuples = []
+        for attr in sorted(self.__dict__.keys()):
+            if not attr in self.nonfeature_attrs:
+                cmd = attr.strip("cmd_")
+                value = getattr(self, attr)
+                tuples.append((cmd, value))
+        return tuples

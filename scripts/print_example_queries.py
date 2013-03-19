@@ -1,19 +1,19 @@
 
 #!/usr/bin/env python
 
-from art import splqueryutils
-from splparser import parse as splparse
+import queryutils
+#from splparser import parse as splparse
 
 BYTES_IN_MB = 1048576
 
 def main(cmd):
     seen = {}
     printed = 0
-    for queries in splqueryutils.get_queries(limit=800*BYTES_IN_MB):
+    for queries in queryutils.get_queries(limit=800*BYTES_IN_MB):
         for query in queries:
             if not query.text in seen:
-                stages = splqueryutils.break_into_stages(query)
-                cmd_invocations = splqueryutils.filter_stages_by(cmd, stages)
+                stages = queryutils.break_into_stages(query.text)
+                cmd_invocations = queryutils.filter_stages_by(cmd, stages)
                 for inst in cmd_invocations:
                     if not inst in seen:
                         print inst

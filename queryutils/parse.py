@@ -42,7 +42,6 @@ def break_into_stages(query):
     new_stages = []
     for stage in stages:
         stage = stage.strip()
-        print stage
         stage = put_in_mapped_strings(stage, dquotes_map)
         stage = put_in_mapped_strings(stage, squotes_map)
         stage = put_in_escaped_double_quotes(stage)
