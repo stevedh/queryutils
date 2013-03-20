@@ -138,6 +138,24 @@ class CommandIndicatorFeatureVector(object):
         self.nonfeature_attrs = ["cmd_sichart", "cmd_sirare", "cmd_sistats", "cmd_sitimechart", "cmd_sitop", "cmd_kv", "nonfeature_attrs", "extract_features", "sample_number"]
         self.extract_features(query)
 
+    def __le__(self, other):
+        if not isinstance(CommandIndicatorFeatureVector):
+            raise TypeError("Can't compare CommandIndicatorFeatureVector with object of a different type.")
+        selfvec = self.values_as_bitvector()
+        othervec = other.values_as_bitvector()
+        if sum(selfvec) < sum(othervec):
+            return True
+        if selfvec < othervec:
+            return True
+        return False
+
+    def __eq__(self, other):
+        if not isinstance(CommandIndicatorFeatureVector):
+            raise TypeError("Can't compare CommandIndicatorFeatureVector with object of a different type.")
+        selfvec = self.values_as_bitvector()
+        othervec = other.values_as_bitvector()
+        return (selvec == othervec)
+    
     def extract_features(self, query):
         stages = break_into_stages(query)
         if len(filter(lambda x: len(x) == 0, stages)) > 0: 
@@ -154,6 +172,11 @@ class CommandIndicatorFeatureVector(object):
         if self.cmd_sitimechart == 1: self.cmd_timechart = 1
         if self.cmd_sitop == 1: self.cmd_top = 1
         if self.cmd_kv == 1: self.cmd_extract = 1
+    
+    def values_as_bit_vector(self):
+        feature_attrs = filter(lambda x: x not in self.nonfeature_attrs, self.__dict__.keys())
+        values = [str(getattr(self, attr)) for attr in sorted(feature_attrs)]
+        return values
 
     def values_as_bit_string(self):
         feature_attrs = filter(lambda x: x not in self.nonfeature_attrs, self.__dict__.keys())
