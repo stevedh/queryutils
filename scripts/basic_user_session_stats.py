@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from art.splqueryutils.sessions import get_user_sessions
-from art.splqueryutils.jsondata import BYTES_IN_MB
+from queryutils import get_user_sessions
+from queryutils import BYTES_IN_MB
 
 def main():
 
@@ -27,7 +27,7 @@ def main():
     stats_dict['total_unique_queries'] = 0.
      
     iter = 0
-    for users in  get_user_sessions(limit=800*BYTES_IN_MB, remove_autorecurring=True):
+    for users in  get_user_sessions(limit=800*BYTES_IN_MB):
         update_basic_stats(stats_dict, users)
         print "Processed " + str(iter) + "-th batch of users."
         iter += 1

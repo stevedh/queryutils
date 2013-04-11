@@ -33,15 +33,14 @@ class SessionEncoder(JSONEncoder):
             return self.encode(obj)
         return JSONEncoder.default(self, obj)
 
-def get_user_sessions(limit=3*BYTES_IN_MB, remove_autorecurring='type'):
-    for users in splqueryutils.get_users(limit=limit):
-        users_with_sessions = extract_sessions(users, remove_autorecurring=remove_autorecurring)
-    yield users_with_sessions
+def get_user_sessions(limit=3*BYTES_IN_MB):
+    for users in get_users(limit=limit):
+        users_with_sessions = extract_sessions(users)
+        yield users_with_sessions
 
-def extract_sessions(users, remove_autorecurring=False):
+def extract_sessions(users):
     for user in users:
-        if remove_autorecurring:
-            remove_autorecurring_queries(user, remove_autorecurring)
+        remove_autorecurring_queries(user, 'by_type')
         extract_sessions_from_user(user)
     return users   
 

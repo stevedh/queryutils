@@ -3,7 +3,7 @@ import sys
 
 from .parse import *
 
-class CommandIndicatorFeatureVector(object):
+class CommandsIndicatorFeatureVector(object):
     
     def __init__(self, n, query):
         self.sample_number = str(n)
@@ -201,7 +201,18 @@ class CommandIndicatorFeatureVector(object):
         tuples = []
         for attr in sorted(self.__dict__.keys()):
             if not attr in self.nonfeature_attrs:
-                cmd = attr.strip("cmd_")
+                cmd = attr[4:]
                 value = getattr(self, attr)
                 tuples.append((cmd, value))
         return tuples
+ 
+    def command_index_tuples(self):
+        tuples = []
+        index = 0
+        for attr in sorted(self.__dict__.keys()):
+            if not attr in self.nonfeature_attrs:
+                cmd = attr[4:]
+                tuples.append((cmd, index))
+                index += 1
+        return tuples
+        

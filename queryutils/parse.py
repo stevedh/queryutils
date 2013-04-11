@@ -1,5 +1,6 @@
 
 from splparser import parse as splparse
+from .query import *
 
 import re
 
@@ -9,6 +10,11 @@ ESCAPED_DQUOTE_STANDIN = "~#$dquote$#~"
 SQID_MARKER = "~#$sqid$#~"
 DQID_MARKER = "~#$dqid$#~"
 
+def extract_template(query):
+    parsetree = parse_query(query)
+    if not parsetree is None:
+        return parsetree.template()
+
 def tag_parseable(query):
     query.parseable = False
     query.parsetree = parse_query(query)
@@ -16,11 +22,14 @@ def tag_parseable(query):
         query.parseable = True
 
 def parse_query(query):
+    if isinstance(query, Query):
+        q = query.encode('ascii', 'ignore').text.strip() # FIXME: Is forcing ASCII encoding the right thing to do here?
+    else:
+        q = query.encode('ascii', 'ignore').strip() # FIXME
     try:
-        q = query.text.strip()
         parsetree = splparse(q)
     except:
-        pass
+        return None
     return parsetree
 
 def parse_queries(queries):
@@ -29,7 +38,7 @@ def parse_queries(queries):
 
 def break_into_stages(query):
     
-    query = query.strip()
+    query = query.text.strip()
     query.encode('string-escape')
     
     tmp = take_out_escaped_slashes(query)
