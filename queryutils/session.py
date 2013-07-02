@@ -1,7 +1,8 @@
 
 import editdist
 
-from .jsondata import *
+#from .jsondata import *
+from .csvdata import *
 
 from collections import defaultdict
 from json import JSONEncoder

@@ -2,11 +2,12 @@ from json import JSONEncoder
 
 class Query(object):
 
-    def __init__(self, text, time, user, type):
+    def __init__(self, text, time, user, type, range):
         self.text = text
         self.time = float(time)
         self.user = user
         self.type = type
+        self.range = range
         self.session = None
         self.delta = 'n/a'
 

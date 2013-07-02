@@ -4,7 +4,8 @@ import inspect
 class Type(object):
 
     ranks = {
-        "Miscellaneous" :                       -1,
+        "Miscellaneous" :                       -2,
+        "Macro" :                               -1,
         "Meta" :                                0,
         "InputtingSelection" :                  1,
         "FilterSelection" :                     2,  
@@ -67,7 +68,7 @@ class Type(object):
         typeahead
         
         * adds rows based on content of other rows
-        - multikv, mvexpand
+        - mvexpand
         """
         def __init__(self):
             self.inputs_metadata = False            # audit
@@ -212,6 +213,7 @@ class Type(object):
         - fillnull (g(x) = not null)
         nomv
         - makemv
+        - multikv
         - replace (g(x) = y if x == k, otherwise x)
         scrub (g(x) = anonymized x)
         setfields (g(x) = c)
@@ -330,6 +332,16 @@ class Type(object):
     class Rename(object):
         """
         - rename: rename
+        """
+        def __init__(self):
+            pass
+
+        def varstring(self):
+            return ""
+   
+    class Macro(object):
+        """
+        - Splunk macros: MACRO tokens
         """
         def __init__(self):
             pass

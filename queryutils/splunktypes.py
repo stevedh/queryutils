@@ -10,12 +10,12 @@ addinfo_command.set_attributes(["function_of_metadata",
                                 "multiple_columns_added"])
 implemented_commands.append(addinfo_command)
 
-addtotalsrow_command = Type("ExtendedProjection", "addtotals row=true")
+addtotalsrow_command = Type("ExtendedProjection", "addtotals row")
 addtotalsrow_command.set_attributes(["numeric_function",
                                     "function_of_multiple_columns"])
 implemented_commands.append(addtotalsrow_command)
 
-addtotalscol_command = Type("Aggregation", "addtotals col=true")
+addtotalscol_command = Type("Aggregation", "addtotals col")
 addtotalscol_command.set_attributes(["applies_fixed_function"])
 implemented_commands.append(addtotalscol_command)
 
@@ -120,13 +120,17 @@ implemented_commands.append(localop_command)
 lookup_command = Type("Join", "lookup")
 implemented_commands.append(lookup_command)
 
+macro_command = Type("Macro", "macro")
+implemented_commands.append(macro_command)
+
 makemv_command = Type("TransformingProjection", "makemv")
 makemv_command.set_attributes(["function_of_same_row",
                                 "string_domain"])
 implemented_commands.append(makemv_command)
 
-multikv_command = Type("InputtingSelection", "multikv")
-multikv_command.set_attributes(["inputs_from_current_data"])
+multikv_command = Type("TransformingProjection", "multikv")
+multikv_command.set_attributes(["string_domain",
+                                "string_range"])
 implemented_commands.append(multikv_command)
 
 mvexpand_command = Type("InputtingSelection", "mvexpand")
@@ -207,6 +211,12 @@ timechart_command = Type("Aggregation", "timechart")
 timechart_command.set_attributes(["visualization_component"])
 implemented_commands.append(timechart_command)
 
+stats_command = Type("Aggregation", "stats")
+implemented_commands.append(stats_command)
+
+sistats_command = Type("Aggregation", "sistats")
+implemented_commands.append(sistats_command)
+
 sitimechart_command = Type("Aggregation", "sitimechart")
 sitimechart_command.set_attributes(["visualization_component"])
 implemented_commands.append(sitimechart_command)
@@ -240,6 +250,9 @@ xmlkv_command.set_attributes(["string_function",
 implemented_commands.append(xmlkv_command)
 
 implemented_commands.sort()
-print [str(c) for c in implemented_commands]
+#print [str(c) for c in implemented_commands]
    
+names = [c.name for c in implemented_commands]
+types = [c.typestr for c in implemented_commands]
+command_type_lookup = dict(zip(names, types))
 

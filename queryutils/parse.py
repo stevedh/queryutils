@@ -10,6 +10,11 @@ ESCAPED_DQUOTE_STANDIN = "~#$dquote$#~"
 SQID_MARKER = "~#$sqid$#~"
 DQID_MARKER = "~#$dqid$#~"
 
+def extract_schema(query):
+    parsetree = parse_query(query)
+    if not parsetree is None:
+        return parsetree.schema()
+
 def extract_template(query):
     parsetree = parse_query(query)
     if not parsetree is None:
