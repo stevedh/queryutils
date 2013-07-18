@@ -41,9 +41,16 @@ def parse_queries(queries):
     parsetrees = [parse_query(q) for q in queries]
     return filter(lambda x: x is not None, parsetrees)
 
+def extract_stages_with_cmd(cmd, query):
+    stages = break_into_stages(query)
+    return filter_stages_by(cmd, stages)
+
 def break_into_stages(query):
     
-    query = query.text.strip()
+    try:
+        query = query.text.strip()
+    except:
+        pass
     query.encode('string-escape')
     
     tmp = take_out_escaped_slashes(query)
