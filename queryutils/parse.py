@@ -28,7 +28,7 @@ def tag_parseable(query):
 
 def parse_query(query):
     if isinstance(query, Query):
-        q = query.encode('ascii', 'ignore').text.strip() # FIXME: Is forcing ASCII encoding the right thing to do here?
+        q = query.text.encode('ascii', 'ignore').strip() # FIXME: Is forcing ASCII encoding the right thing to do here?
     else:
         q = query.encode('ascii', 'ignore').strip() # FIXME
     try:
