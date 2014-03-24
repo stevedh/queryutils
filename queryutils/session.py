@@ -1,7 +1,7 @@
 
 import editdist
 
-from data import get_users
+from data import get_users, Version
 
 from collections import defaultdict
 from json import JSONEncoder
@@ -33,26 +33,26 @@ class SessionEncoder(JSONEncoder):
             return self.encode(obj)
         return JSONEncoder.default(self, obj)
 
-def get_user_sessions(limit=None, filename=""):
-    for users in get_users(limit=limit, filename=filename):
-        users_with_sessions = extract_sessions(users)
+def get_user_sessions(limit=None, filename="", directory="", version=Version.UNDIAG_2014):
+    for users in get_users(limit=limit, filename=filename, directory=directory):
+        users_with_sessions = extract_sessions(users, version=version)
         yield users_with_sessions
 
-def extract_sessions(users):
+def extract_sessions(users, version=Version.UNDIAG_2014):
     for user in users:
-        remove_autorecurring_queries(user, 'by_type')
+        remove_autorecurring_queries_by_type(user, version=version)
         extract_sessions_from_user(user)
     return users   
 
-def remove_autorecurring_queries(user, how):
-    if how == 'by_type':
-        remove_autorecurring_queries_by_type(user)
-    elif how == 'by_time':
-        remove_autorecurring_queries_by_time(user)
-
-def remove_autorecurring_queries_by_type(user):
-    user.autorecurring_queries = filter(lambda x: not x.type == 'historical', user.queries)
-    user.queries = filter(lambda x: x.type == 'historical', user.queries)
+def remove_autorecurring_queries_by_type(user, version=Version.UNDIAG_2014):
+    if version == Version.UNDIAG_2014:
+        type = "scheduled"
+    elif version in [Version.UNDIAG_2012, Version.STORM_2013]:
+        type = "historical"
+    else:
+        print "Unknown data version -- please provide a known version." # TODO: Raise error.
+    user.autorecurring_queries = filter(lambda x: not x.type == type, user.queries)
+    user.queries = filter(lambda x: x.type == type, user.queries)
 
 def remove_autorecurring_queries_by_time(user):
     unique_queries = defaultdict(list)
@@ -72,7 +72,7 @@ def remove_autorecurring_queries_by_time(user):
         
         # ignore the first query because the repeat delta will be zero
         repeat_delta_avg = 1.
-        query_list[0].repeat_delta = repeat_delta_avg*10. # just to make sure that if there is only one such query, it doesn't get removed
+        query_list[0].repeat_delta = repeat_delta_avg*10. # just to make sure that if there is only one such query, it doesn"t get removed
 
         if len(query_list) > 1:
             repeat_delta_avg = sum([q.repeat_delta for q in query_list[1:]]) / len(query_list[1:])    

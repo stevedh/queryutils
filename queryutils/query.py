@@ -12,7 +12,7 @@ class Query(object):
         self.delta = 'n/a'
 
     def __repr__(self):
-        return str(self.time) + ": " + str(self.text) + '\n'
+        return "".join([str(self.time), ": ", self.text.encode("ascii", "ignore").strip(), "\n"])
 
 class QueryEncoder(JSONEncoder):
    

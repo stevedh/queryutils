@@ -7,9 +7,12 @@ import splparser.parser
 from user import *
 from query import *
 
+from os import path
+
 from splparser.exceptions import SPLSyntaxError, TerminatingSPLSyntaxError
 
 BYTES_IN_MB = 1048576
+LIMIT = 2000*BYTES_IN_MB
 
 def get_users_from_file(filename):
     first = True
@@ -17,13 +20,19 @@ def get_users_from_file(filename):
     with open(filename) as datafile:
         reader = csv.DictReader(datafile)
         for row in reader:
-            username = row['user']
-            timestamp = float(dateutil.parser.parse(row['_time']).strftime('%s.%f'))
-            search = row['search'].strip()
-            query_string = search.decode('utf-8')
+            username = row.get('user', None)
+            case = row.get('case_id', None)
+            if case is not None:
+                username = ".".join([username, case])
             user = User(username)
-            type = row['searchtype']
-            range = row['range']
+            user.case = case
+            timestamp = float(dateutil.parser.parse(row.get('_time', None)).strftime('%s.%f'))
+            search = row.get('search', None).strip()
+            query_string = search.decode('utf-8')
+            type = row.get('searchtype', None)
+            if type is None:
+                type = row.get('search_type', None)
+            range = row.get('range', None)
             if range != "":
                 range = float(range)
             query = Query(query_string, timestamp, user, type, range) 
@@ -32,20 +41,20 @@ def get_users_from_file(filename):
             users[username].queries.append(query)
     return [users.values()]
 
-def get_users_from_directory(limit=50*BYTES_IN_MB):
-    raw_data_files = get_csv_files(limit=limit)
+def get_users_from_directory(directory, limit=LIMIT):
+    raw_data_files = get_csv_files(directory, limit=limit)
     for f in raw_data_files:
         return get_users_from_file(f)
 
-def get_csv_files(dir, limit=1000*BYTES_IN_MB):
+def get_csv_files(dir, limit=LIMIT):
     csv_files = []
     bytes_added = 0.
     for (dirpath, dirnames, filenames) in os.walk(dir):
         for filename in filenames:
-            if filename[-5:] == '.csv': 
-                full_filename = os.path.abspath(dir) + '/' + filename
+            if filename[-4:] == '.csv': 
+                full_filename = path.join(path.abspath(dir), filename)
                 csv_files.append(full_filename) 
-                bytes_added += os.path.getsize(full_filename)
+                bytes_added += path.getsize(full_filename)
                 if bytes_added > limit:
                     return csv_files
     return csv_files
