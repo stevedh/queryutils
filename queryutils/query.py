@@ -2,17 +2,26 @@ from json import JSONEncoder
 
 class Query(object):
 
-    def __init__(self, text, time, user, type, range):
+    def __init__(self, text, time, user, searchtype, 
+                earliest_event, latest_event, range, 
+                is_realtime, splunk_search_id, runtime, splunk_savedsearch_name):
         self.text = text
         self.time = float(time)
         self.user = user
-        self.type = type
-        self.range = range
+        self.searchtype = searchtype
+        self.earliest_event = earliest_event
+        self.latest_event = latest_event
+        self.range = range # latest_event - earliest_event
+        self.is_realtime = bool(is_realtime)
+        self.splunk_search_id = splunk_search_id
+        self.runtime = runtime
+        self.splunk_savedsearch_name = splunk_savedsearch_name
+        
         self.session = None
         self.delta = 'n/a'
 
     def __repr__(self):
-        return "".join([str(self.time), ": ", self.text.encode("ascii", "ignore").strip(), "\n"])
+        return "".join([str(self.time), ": ", unicode(self.text).strip(), "\n"])
 
 class QueryEncoder(JSONEncoder):
    

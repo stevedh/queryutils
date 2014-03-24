@@ -78,7 +78,7 @@ def print_example_duplicates(duplicate_searches, total_searches):
     #TODO: Try and make this function use less memory.
     to_print_list = sorted(to_print.iteritems(), key=lambda x: x[1], reverse=True)
     for (key, value) in to_print_list:
-        print key.encode('ascii', 'ignore') #TODO: Figure out why I needed this.
+        print unicode(key)
         print "\t%2.3f\t%d" % ((value / total_searches)*100., value)
     print "ALL" 
     print "\t%d\t%d" % (100., total_searches)
@@ -168,7 +168,7 @@ def print_filtered_searches_by_commands(jsonfiles, cmds):
                 if not c in cmds:
                     discard = True
             if not discard:
-                print value.encode('ascii', 'ignore') #TODO: Figure out why I needed this.
+                print unicode(value)
 
 if __name__ == "__main__":
 

@@ -40,19 +40,19 @@ def get_user_sessions(limit=None, filename="", directory="", version=Version.UND
 
 def extract_sessions(users, version=Version.UNDIAG_2014):
     for user in users:
-        remove_autorecurring_queries_by_type(user, version=version)
+        remove_autorecurring_queries_by_searchtype(user, version=version)
         extract_sessions_from_user(user)
     return users   
 
-def remove_autorecurring_queries_by_type(user, version=Version.UNDIAG_2014):
+def remove_autorecurring_queries_by_searchtype(user, version=Version.UNDIAG_2014):
     if version == Version.UNDIAG_2014:
-        type = "scheduled"
+        searchtype = "scheduled"
     elif version in [Version.UNDIAG_2012, Version.STORM_2013]:
-        type = "historical"
+        searchtype = "historical"
     else:
         print "Unknown data version -- please provide a known version." # TODO: Raise error.
-    user.autorecurring_queries = filter(lambda x: not x.type == type, user.queries)
-    user.queries = filter(lambda x: x.type == type, user.queries)
+    user.autorecurring_queries = filter(lambda x: not x.searchtype == searchtype, user.queries)
+    user.queries = filter(lambda x: x.searchtype == searchtype, user.queries)
 
 def remove_autorecurring_queries_by_time(user):
     unique_queries = defaultdict(list)
@@ -132,9 +132,9 @@ def compute_intrasession_similarity(sessions, metric):
             if prev_search == '':
                 prev_search = curr_search
                 continue
-            prev_search_ascii = prev_search.encode('ascii', 'ignore') # HACK
-            curr_search_ascii = curr_search.encode('ascii', 'ignore') 
-            session['difference'].append(metric(prev_search_ascii, curr_search_ascii))
+            prev_search_unicode = unicode(prev_search) 
+            curr_search_unicode = unicode(curr_search) 
+            session['difference'].append(metric(prev_search_unicode, curr_search_unicode))
 
 def normalized_edit_distance(a, b):
     return float(editdist.distance(a, b)) / float(max(len(a), len(b)))

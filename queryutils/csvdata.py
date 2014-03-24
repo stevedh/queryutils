@@ -21,21 +21,78 @@ def get_users_from_file(filename):
         reader = csv.DictReader(datafile)
         for row in reader:
             username = row.get('user', None)
+            if username is not None:
+                username = unicode(username.decode("utf-8"))
+
             case = row.get('case_id', None)
             if case is not None:
+                case = unicode(case.decode("utf-8"))
+            if case is not None:
                 username = ".".join([username, case])
+
             user = User(username)
             user.case = case
+
             timestamp = float(dateutil.parser.parse(row.get('_time', None)).strftime('%s.%f'))
-            search = row.get('search', None).strip()
-            query_string = search.decode('utf-8')
-            type = row.get('searchtype', None)
-            if type is None:
-                type = row.get('search_type', None)
+
+            search = row.get('search', None)
+            if search is not None:
+                query_string = unicode(search.decode("utf-8")).strip()
+
+            searchtype = row.get('searchtype', None)
+            if searchtype is None:
+                searchtype = row.get('search_type', None)
+            if searchtype is not None:
+                searchtype = unicode(searchtype.decode("utf-8"))
+
+            search_et = row.get('search_et', None)
+            if search_et is not None:
+                try:
+                    search_et = float(search_et.decode("utf-8"))
+                except:
+                    search_et = None
+
+            search_lt = row.get('search_lt', None)
+            if search_lt is not None:
+                try:
+                    search_lt = float(search_lt.decode("utf-8"))
+                except:
+                    search_lt = None
+
             range = row.get('range', None)
-            if range != "":
-                range = float(range)
-            query = Query(query_string, timestamp, user, type, range) 
+            if range is not None:
+                try:
+                    range = float(range.decode("utf-8"))
+                except:
+                    range = None
+
+            is_realtime = row.get('is_realtime', None)
+            if is_realtime is not None and is_realtime == "false":
+                is_realtime = False
+            if is_realtime is not None and is_realtime == "true":
+                is_realtime = True
+
+            splunk_id = row.get('search_id', None)
+            if splunk_id is not None:
+                splunk_id = unicode(splunk_id.decode("utf-8"))
+
+            runtime = row.get('runtime', None)
+            if runtime is None:
+                runtime = row.get('total_run_time', None)
+            if runtime is not None:
+                try:
+                    runtime = float(runtime.decode("utf-8"))
+                except:
+                    runtime = None
+
+            savedsearch_name = row.get('savedsearch_name', None)
+            if savedsearch_name is not None:
+                savedsearch_name = unicode(savedsearch_name.decode("utf-8"))
+
+            query = Query(query_string, timestamp, user, searchtype, 
+                            search_et, search_lt, range, 
+                            is_realtime, splunk_id, runtime, savedsearch_name) 
+
             if not username in users:
                 users[username] = user
             users[username].queries.append(query)

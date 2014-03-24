@@ -3,6 +3,7 @@
 *.log
 parse.py
 parser.out
+*.db
 
 # OS specific files
 .DS_Store

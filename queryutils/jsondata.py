@@ -18,7 +18,7 @@ def get_users_from_file(filename):
         if 'user' in result and '_time' in result and 'search' in result:
             username = result['user']
             timestamp = float(dateutil.parser.parse(result['_time']).strftime('%s.%f'))
-            query_string = result['search'].strip().encode('ascii', 'ignore')
+            query_string = unicode(result['search'].strip())
             user = User(username)
             type = result['searchtype']
             query = Query(query_string, timestamp, user, type) 
@@ -80,7 +80,7 @@ def print_parseable_searches(jsonfiles):
     for (key, value) in splunk_result_record_iter(jsonfiles):
         if is_search(key):
             try:
-                splparser.parser.parse(value.encode('ascii', 'ignore')) # HACK
+                splparser.parser.parse(unicode(value))
                 print value
             except SPLSyntaxError:
                 continue
