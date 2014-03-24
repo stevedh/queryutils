@@ -3,51 +3,36 @@ import json
 import os
 import splparser.parser
 
-from .user import *
-from .query import *
+from user import *
+from query import *
 
 from itertools import chain
 from splparser.exceptions import SPLSyntaxError, TerminatingSPLSyntaxError
 
 BYTES_IN_MB = 1048576
 
-default_data_dir = '.'
-home_dir = os.path.expanduser("~")
-vars_conf = home_dir + '/.art/vars.conf'
-try:
-    varfile = open(vars_conf, 'r')
-    vars = json.load(varfile)
-    default_data_dir = vars['default_data_dir']
-except:
-    pass
+def get_users_from_file(filename):
+    queries = []
+    users = {}
+    for result in splunk_result_iter([f]):
+        if 'user' in result and '_time' in result and 'search' in result:
+            username = result['user']
+            timestamp = float(dateutil.parser.parse(result['_time']).strftime('%s.%f'))
+            query_string = result['search'].strip().encode('ascii', 'ignore')
+            user = User(username)
+            type = result['searchtype']
+            query = Query(query_string, timestamp, user, type) 
+            if not username in users:
+                users[username] = user
+            users[username].queries.append(query)
+    yield users.values()
 
-def get_queries(limit=50*BYTES_IN_MB):
-    for users in get_users(limit=limit):
-        queries = [user.queries for user in users]
-        yield flatten(queries)
-
-def flatten(lol):
-    return chain.from_iterable(lol)
-
-def get_users(limit=50*BYTES_IN_MB):
+def get_users_from_directory(limit=50*BYTES_IN_MB):
     raw_data_files = get_json_files(limit=limit)
     for f in raw_data_files:
-        queries = []
-        users = {}
-        for result in splunk_result_iter([f]):
-            if 'user' in result and '_time' in result and 'search' in result:
-                username = result['user']
-                timestamp = float(dateutil.parser.parse(result['_time']).strftime('%s.%f'))
-                query_string = result['search'].strip().encode('ascii', 'ignore')
-                user = User(username)
-                type = result['searchtype']
-                query = Query(query_string, timestamp, user, type) 
-                if not username in users:
-                    users[username] = user
-                users[username].queries.append(query)
-        yield users.values()
+        return get_users_from_file(f)
 
-def get_json_files(dir=default_data_dir, limit=50*BYTES_IN_MB):
+def get_json_files(dir, limit=1000*BYTES_IN_MB):
     json_files = []
     bytes_added = 0.
     for (dirpath, dirnames, filenames) in os.walk(dir):
@@ -134,6 +119,3 @@ def is_search_length(splunk_record_key):
 
 def is_search_range(splunk_record_key):
     return splunk_record_key == 'range'
-
-
-

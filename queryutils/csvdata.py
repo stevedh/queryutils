@@ -1,56 +1,29 @@
 
 import csv
 import dateutil.parser
-import json
 import os
 import splparser.parser
 
-from .user import *
-from .query import *
+from user import *
+from query import *
 
-from itertools import chain
 from splparser.exceptions import SPLSyntaxError, TerminatingSPLSyntaxError
 
 BYTES_IN_MB = 1048576
-QUERIES_CSV = "/Users/salspaugh/splunk-internship/data/storm_may2013/SearchAuditLogsApril1ToApril7.csv"
 
-default_data_dir = '.'
-home_dir = os.path.expanduser("~")
-vars_conf = home_dir + '/.art/vars.conf'
-try:
-    varfile = open(vars_conf, 'r')
-    vars = json.load(varfile)
-    default_data_dir = vars['default_data_dir']
-except:
-    pass
-
-def get_queries(limit=50*BYTES_IN_MB):
-    for users in get_users(limit=limit):
-        queries = [user.queries for user in users]
-        yield flatten(queries)
-
-def flatten(lol):
-    return chain.from_iterable(lol)
-
-def get_users(limit=None):
+def get_users_from_file(filename):
     first = True
     users = {}
-    with open(QUERIES_CSV) as datafile:
-        reader = csv.reader(datafile)
-        for line in reader:
-            if first: 
-                first = False
-                continue
-            result = parse_query_line(line)
-            username = result['user']
-            timestamp = float(dateutil.parser.parse(result['_time']).strftime('%s.%f'))
-            search = result['search'].strip()
-            #print search
-            #query_string = search.encode('ascii', 'ignore')
+    with open(filename) as datafile:
+        reader = csv.DictReader(datafile)
+        for row in reader:
+            username = row['user']
+            timestamp = float(dateutil.parser.parse(row['_time']).strftime('%s.%f'))
+            search = row['search'].strip()
             query_string = search.decode('utf-8')
             user = User(username)
-            type = result['searchtype']
-            range = result['range']
+            type = row['searchtype']
+            range = row['range']
             if range != "":
                 range = float(range)
             query = Query(query_string, timestamp, user, type, range) 
@@ -59,12 +32,20 @@ def get_users(limit=None):
             users[username].queries.append(query)
     return [users.values()]
 
-def parse_query_line(parts):
-    results = {}
-    #parts = line.split(',')
-    results['user'] = parts[6]
-    results['search'] = parts[4]
-    results['_time'] = parts[9]
-    results['searchtype'] = parts[0]
-    results['range'] = parts[1]
-    return results
+def get_users_from_directory(limit=50*BYTES_IN_MB):
+    raw_data_files = get_csv_files(limit=limit)
+    for f in raw_data_files:
+        return get_users_from_file(f)
+
+def get_csv_files(dir, limit=1000*BYTES_IN_MB):
+    csv_files = []
+    bytes_added = 0.
+    for (dirpath, dirnames, filenames) in os.walk(dir):
+        for filename in filenames:
+            if filename[-5:] == '.csv': 
+                full_filename = os.path.abspath(dir) + '/' + filename
+                csv_files.append(full_filename) 
+                bytes_added += os.path.getsize(full_filename)
+                if bytes_added > limit:
+                    return csv_files
+    return csv_files

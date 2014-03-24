@@ -2,6 +2,7 @@
 *parsetab.py
 *.log
 parse.py
+parser.out
 
 # OS specific files
 .DS_Store

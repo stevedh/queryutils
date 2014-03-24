@@ -1,8 +1,7 @@
 
 import editdist
 
-#from .jsondata import *
-from .csvdata import *
+from data import get_users
 
 from collections import defaultdict
 from json import JSONEncoder
@@ -34,8 +33,8 @@ class SessionEncoder(JSONEncoder):
             return self.encode(obj)
         return JSONEncoder.default(self, obj)
 
-def get_user_sessions(limit=3*BYTES_IN_MB):
-    for users in get_users(limit=limit):
+def get_user_sessions(limit=None, filename=""):
+    for users in get_users(limit=limit, filename=filename):
         users_with_sessions = extract_sessions(users)
         yield users_with_sessions
 
