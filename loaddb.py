@@ -4,10 +4,12 @@ import csv
 from sqlite3 import connect
 
 from argparse import ArgumentParser
-from queryutils import get_user_sessions
 from contextlib import closing
+from os import path
+from queryutils import get_user_sessions
 
-SCHEMA = "spl_queries_schema.sql"
+thisdir = path.dirname(path.realpath(__file__))
+SCHEMA = path.join(thisdir, "spl_queries_schema.sql")
 
 def main(database, schema, filename="", directory=""):
     init_db(database, schema) 
