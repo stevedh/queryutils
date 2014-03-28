@@ -55,25 +55,27 @@ class Type(object):
         crawl
         - inputlookup
         - inputcsv
-        loadjob
-        rest
-        savedsearch
+        - loadjob
+        - rest
 
-        * different rows and columns that are function of metadata, optionally formatteo as a table
+        * different rows and columns that are a function of a saved search and the current data
+        - savedsearch
+
+        * different rows and columns that are function of metadata, optionally formatted as a table
         - audit
         dbinspect
-        history
-        metadata
+        - history
+        - metadata
         metasearch
-        typeahead
+        - typeahead
         
         * adds rows based on content of other rows
         - mvexpand
         """
         def __init__(self):
-            self.inputs_metadata = False            # audit
-            self.inputs_external_data = False       # inputcsv, inputlookup
-            self.inputs_from_current_data = False   # multikv
+            self.inputs_metadata = False            # audit, history, metadata
+            self.inputs_external_data = False       # inputcsv, inputlookup, loadjob, rest
+            self.inputs_from_current_data = False   # savedsearch, multikv
 
         def varstring(self):
             attrs = [self.inputs_metadata,  
@@ -150,22 +152,26 @@ class Type(object):
         
         * additional column in each row that is function of same or other column(s) in same row and user input
         + eval
-        spath
+        + spath
+
+        * additional column in each row that is a function of possible other rows, any columns, and user input
+        + appendcols
         """
 
         def __init__(self):
 
-            self.function_with_user_input_params = False    # eval
+            self.function_with_user_input_params = False    # eval, appendcols
             
-            self.numeric_function = False                   # addtotals row=True, eval
-            self.string_function = False                    # extract (kv), eval, rex, strcat, xmlkv
+            self.numeric_function = False                   # addtotals row=True, eval, appendcols
+            self.string_function = False                    # extract (kv), eval, rex, strcat, xmlkv, appendcols, spath
 
-            self.function_of_metadata = False               # addinfo, tags
-            self.function_of_single_columns = False         # rex, xmlkv
-            self.function_of_multiple_columns = False       # addtotals row=True, extract (kv), eval, strcat, tags
+            self.function_of_metadata = False               # addinfo, tags, appendcols
+            self.function_of_single_columns = False         # rex, xmlkv, appendcols, spath
+            self.function_of_multiple_columns = False       # addtotals row=True, extract (kv), eval, strcat, tags, appendcols
+            self.function_of_subsearch = False              # appendcols
 
-            self.multiple_columns_added = False             # addinfo, extract (kv), rex, xmlkv, tags
-            self.data_dependent_num_columns_added = False   # extract (kv), xmlkv, tags
+            self.multiple_columns_added = False             # addinfo, extract (kv), rex, xmlkv, tags, appendcols
+            self.data_dependent_num_columns_added = False   # extract (kv), xmlkv, tags, appendcols
 
         def varstring(self):
             attrs = [self.function_with_user_input_params, 
@@ -220,6 +226,7 @@ class Type(object):
         xmlunescape (g(x) = unescaped x)
 
         * transform entries based on function of other entries in the same column in all rows
+        - bin (alias for bucket)
         - bucket
         bucketdir
         outlier
@@ -229,17 +236,18 @@ class Type(object):
         """
 
         def __init__(self):
+            self.function_of_same_entry = False     # convert, 
             self.function_of_same_row = False       # convert, fieldformat, 
                                                     # fillnull, makemv, replace
-            self.function_of_other_rows = False     # bucket
+            self.function_of_other_rows = False     # bucket, bin
 
             self.string_domain = False              # convert, fieldformat, makemv, replace
             self.string_range = False               # fieldformat, replace
             
-            self.numeric_domain = False             # bucket
+            self.numeric_domain = False             # bucket, bin
             self.numeric_range = False              # convert
             
-            self.range_domain = False               # bucket
+            self.range_domain = False               # bucket, bin
             
             self.null_domain = False                # fillnull
             self.user_defined_range = False         # fillnull
@@ -270,7 +278,7 @@ class Type(object):
     class Join(object):
         """
         * additional columns in each row that is function of columns of two rows, pairwise
-        join 
+        - join 
         - lookup
         selfjoin
         """
@@ -283,7 +291,7 @@ class Type(object):
     class Aggregation(object):
         """
         * additional row with columns that is function of same column in all rows 
-        addcoltotals
+        - addcoltotals
         - addtotals col=true
         - chart
         - sichart
@@ -291,6 +299,7 @@ class Type(object):
         - sitimechart
         - stats
         - sistats
+        - streamstats
         """
         def __init__(self):
             self.visualization_component = False    # chart, sichart,
@@ -373,7 +382,7 @@ class Type(object):
         """
         * metacommand outputs data
         - collect
-        outputcsv
+        - outputcsv
         - outputlookup
         sendemail
 
@@ -394,7 +403,7 @@ class Type(object):
         def __init__(self):
             self.controls_computation = False       # localop
             self.calls_external_command = False     #
-            self.outputs_data = False               # collect, outputlookup
+            self.outputs_data = False               # collect, outputlookup, outputcsv
             self.removes_data = False               # delete
 
         def varstring(self):

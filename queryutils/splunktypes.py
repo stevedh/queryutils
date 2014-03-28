@@ -12,21 +12,43 @@ implemented_commands.append(addinfo_command)
 
 addtotalsrow_command = Type("ExtendedProjection", "addtotals row")
 addtotalsrow_command.set_attributes(["numeric_function",
-                                    "function_of_multiple_columns"])
+                                     "function_of_multiple_columns"])
 implemented_commands.append(addtotalsrow_command)
 
 addtotalscol_command = Type("Aggregation", "addtotals col")
 addtotalscol_command.set_attributes(["applies_fixed_function"])
 implemented_commands.append(addtotalscol_command)
 
+addcoltotals_command = Type("Aggregation", "addtotals col")
+addcoltotals_command.set_attributes(["applies_fixed_function"])
+implemented_commands.append(addcoltotals_command)
+
+appendcols_command = Type("ExtendedProjection", "appendcols")
+appendcols_command.set_attributes(["function_with_user_input_params",
+                                   "numeric_function",
+                                   "string_function",
+                                   "function_of_metadata",
+                                   "function_of_single_columns",
+                                   "function_of_multiple_columns",
+                                   "function_of_subsearch",
+                                   "multiple_columns_added",
+                                   "data_dependent_num_columns_added"])
+implemented_commands.append(appendcols_command)
+
 audit_command = Type("InputtingSelection", "audit")
 audit_command.set_attributes(["inputs_metadata"])
 implemented_commands.append(audit_command)
 
+bin_command = Type("TransformingProjection", "bin") # alias for bucket
+bin_command.set_attributes(["function_of_other_rows",
+                               "numeric_domain",
+                               "range_domain"])
+implemented_commands.append(bin_command)
+
 bucket_command = Type("TransformingProjection", "bucket")
 bucket_command.set_attributes(["function_of_other_rows",
-                                "numeric_domain",
-                                "range_domain"])
+                               "numeric_domain",
+                               "range_domain"])
 implemented_commands.append(bucket_command)
 
 chart_command = Type("Aggregation", "chart")
@@ -79,13 +101,6 @@ extract_command.set_attributes(["string_function",
                                     "data_dependent_num_columns_added"])
 implemented_commands.append(extract_command)
 
-kv_command = Type("ExtendedProjection", "kv")
-kv_command.set_attributes(["string_function",
-                                    "function_of_multiple_columns",
-                                    "multiple_columns_added",
-                                    "data_dependent_num_columns_added"])
-implemented_commands.append(kv_command)
-
 fields_command = Type("Projection", "fields")
 implemented_commands.append(fields_command)
 
@@ -101,17 +116,35 @@ fillnull_command.set_attributes(["function_of_same_row",
                                     "user_defined_range"])
 implemented_commands.append(fillnull_command)
 
-inputlookup_command = Type("InputtingSelection", "inputlookup")
-inputlookup_command.set_attributes(["inputlookup"])
-implemented_commands.append(inputlookup_command)
-
-inputcsv_command = Type("InputtingSelection", "inputcsv")
-inputcsv_command.set_attributes(["inputcsv"])
-implemented_commands.append(inputcsv_command)
-
 head_command = Type("FilterSelection", "head")
 head_command.set_attributes(["by_index"])
 implemented_commands.append(head_command)
+
+history_command = Type("InputtingSelection", "history")
+history_command.set_attributes(["inputs_metadata"])
+implemented_commands.append(history_command)
+
+inputlookup_command = Type("InputtingSelection", "inputlookup")
+inputlookup_command.set_attributes(["inputs_external_data"])
+implemented_commands.append(inputlookup_command)
+
+inputcsv_command = Type("InputtingSelection", "inputcsv")
+inputcsv_command.set_attributes(["inputs_external_data"])
+implemented_commands.append(inputcsv_command)
+
+join_command = Type("Join", "join")
+implemented_commands.append(join_command)
+
+kv_command = Type("ExtendedProjection", "kv")
+kv_command.set_attributes(["string_function",
+                                    "function_of_multiple_columns",
+                                    "multiple_columns_added",
+                                    "data_dependent_num_columns_added"])
+implemented_commands.append(kv_command)
+
+loadjob_command = Type("InputtingSelection", "loadjob")
+loadjob_command.set_attributes(["inputs_external_data"])
+implemented_commands.append(loadjob_command)
 
 localop_command = Type("Meta", "localop")
 localop_command.set_attributes(["controls_computation"])
@@ -119,6 +152,10 @@ implemented_commands.append(localop_command)
 
 lookup_command = Type("Join", "lookup")
 implemented_commands.append(lookup_command)
+
+metadata_command = Type("InputtingSelection", "metadata")
+metadata_command.set_attributes(["inputs_metadata"])
+implemented_commands.append(metadata_command)
 
 macro_command = Type("Macro", "macro")
 implemented_commands.append(macro_command)
@@ -136,6 +173,10 @@ implemented_commands.append(multikv_command)
 mvexpand_command = Type("InputtingSelection", "mvexpand")
 mvexpand_command.set_attributes(["inputs_from_current_data"])
 implemented_commands.append(mvexpand_command)
+
+outputcsv_command = Type("Meta", "outputcsv")
+outputcsv_command.set_attributes(["outputs_data"])
+implemented_commands.append(outputcsv_command)
 
 outputlookup_command = Type("Meta", "outputlookup")
 outputlookup_command.set_attributes(["outputs_data"])
@@ -170,6 +211,10 @@ replace_command.set_attributes(["function_of_same_row",
                                     "string_range"])
 implemented_commands.append(replace_command)
 
+rest_command = Type("InputtingSelection", "rest")
+rest_command.set_attributes(["inputs_external_data"])
+implemented_commands.append(rest_command)
+
 reverse_command = Type("Reorder", "reverse")
 implemented_commands.append(reverse_command)
 
@@ -179,10 +224,18 @@ rex_command.set_attributes(["string_function",
                             "multiple_columns_added"])
 implemented_commands.append(rex_command)
 
+savedsearch_command = Type("InputtingSelection", "savedsearch")
+savedsearch_command.set_attributes(["inputs_from_current_data"])
+implemented_commands.append(savedsearch_command)
+
 search_command = Type("FilterSelection", "search")
 search_command.set_attributes(["by_user_string_match",
                                 "by_boolean_statement"])
 implemented_commands.append(search_command)
+
+sendemail_command = Type("Meta", "sendemail")
+sendemail_command.set_attributes(["outputs_data"])
+implemented_commands.append(sendemail_command)
 
 sort_command = Type("Reorder", "sort")
 implemented_commands.append(sort_command)
@@ -214,6 +267,9 @@ implemented_commands.append(timechart_command)
 stats_command = Type("Aggregation", "stats")
 implemented_commands.append(stats_command)
 
+streamstats_command = Type("Aggregation", "streamstats")
+implemented_commands.append(streamstats_command)
+
 sistats_command = Type("Aggregation", "sistats")
 implemented_commands.append(sistats_command)
 
@@ -223,16 +279,25 @@ implemented_commands.append(sitimechart_command)
 
 top_command = Type("Aggregation", "top")
 top_command.set_attributes(["reorders",
-                                "applies_fixed_function"])
+                            "applies_fixed_function"])
 implemented_commands.append(top_command)
 
 sitop_command = Type("Aggregation", "sitop")
 sitop_command.set_attributes(["reorders",
-                                "applies_fixed_function"])
+                              "applies_fixed_function"])
 implemented_commands.append(sitop_command)
+
+spath_command = Type("ExtendedProjection", "spath")
+spath_command.set_attributes(["string_function",
+                              "function_of_single_columns"])
+implemented_commands.append(spath_command)
 
 transpose_command = Type("Transpose", "transpose")
 implemented_commands.append(transpose_command)
+
+typeahead_command = Type("InputtingSelection", "typeahead")
+typeahead_command.set_attributes(["inputs_metadata"])
+implemented_commands.append(typeahead_command)
 
 where_command = Type("FilterSelection", "where")
 where_command.set_attributes(["by_boolean_statement"])
@@ -244,9 +309,9 @@ implemented_commands.append(uniq_command)
 
 xmlkv_command = Type("ExtendedProjection", "xmlkv")
 xmlkv_command.set_attributes(["string_function",
-                                "function_of_single_columns",
-                                "multiple_columns_added",
-                                "data_depended_columns_added"])
+                              "function_of_single_columns",
+                              "multiple_columns_added",
+                              "data_depended_columns_added"])
 implemented_commands.append(xmlkv_command)
 
 implemented_commands.sort()
