@@ -15,7 +15,7 @@ CREATE TABLE queries (
     user_id INTEGER REFERENCES users(id),
     session_id INTEGER REFERENCES sessions(id),
     CONSTRAINT issuing_user FOREIGN KEY (user_id) REFERENCES users(id),
-    CONSTRAINT containing_session FOREIGN KEY (session_id) REFERENCES session(id)
+    CONSTRAINT containing_session FOREIGN KEY (session_id) REFERENCES sessions(id)
 );
 
 DROP TABLE IF EXISTS users;
@@ -30,6 +30,6 @@ DROP TABLE IF EXISTS sessions;
 CREATE TABLE sessions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER REFERENCES users(id),
-    type TEXT, -- TODO: Change to session_type
+    session_type TEXT,
     CONSTRAINT owner FOREIGN KEY (user_id) REFERENCES users(id)
 );

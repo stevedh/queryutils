@@ -1,4 +1,3 @@
-
 import math
 import csv
 from sqlite3 import connect
@@ -10,6 +9,7 @@ from queryutils import get_user_sessions
 
 thisdir = path.dirname(path.realpath(__file__))
 SCHEMA = path.join(thisdir, "spl_queries_schema.sql")
+
 
 def main(database, schema, filename="", directory=""):
     init_db(database, schema) 
