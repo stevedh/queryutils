@@ -23,6 +23,12 @@ addcoltotals_command = Type("Aggregation", "addtotals col")
 addcoltotals_command.set_attributes(["applies_fixed_function"])
 implemented_commands.append(addcoltotals_command)
 
+anomalies_command = Type("WindowingProjection", "anomalies")
+implemented_commands.append(anomalies_command)
+
+append_command = Type("Union", "append")
+implemented_commands.append(append_command)
+
 appendcols_command = Type("ExtendedProjection", "appendcols")
 appendcols_command.set_attributes(["function_with_user_input_params",
                                    "numeric_function",
@@ -39,16 +45,10 @@ audit_command = Type("InputtingSelection", "audit")
 audit_command.set_attributes(["inputs_metadata"])
 implemented_commands.append(audit_command)
 
-bin_command = Type("TransformingProjection", "bin") # alias for bucket
-bin_command.set_attributes(["function_of_other_rows",
-                               "numeric_domain",
-                               "range_domain"])
+bin_command = Type("ExtendedProjection", "bin") # alias for bucket
 implemented_commands.append(bin_command)
 
-bucket_command = Type("TransformingProjection", "bucket")
-bucket_command.set_attributes(["function_of_other_rows",
-                               "numeric_domain",
-                               "range_domain"])
+bucket_command = Type("ExtendedProjection", "bucket")
 implemented_commands.append(bucket_command)
 
 chart_command = Type("Aggregation", "chart")
@@ -64,7 +64,7 @@ collect_command.set_attributes(["outputs_data"])
 implemented_commands.append(collect_command)
 
 convert_command = Type("TransformingProjection", "convert")
-convert_command.set_attributes(["function_of_same_row",
+convert_command.set_attributes(["function_of_same_entry",
                                     "string_domain",
                                     "numeric_range"])
 implemented_commands.append(convert_command)
@@ -90,6 +90,12 @@ eval_command.set_attributes(["function_with_user_input_params",
                                 "function_of_multiple_columns"])
 implemented_commands.append(eval_command)
 
+eventstats_command = Type("ExtendedProjection", "eventstats") # aggregation and projection
+implemented_commands.append(eventstats_command)
+
+eventcount_command = Type("Aggregation", "eventcount")
+implemented_commands.append(eventcount_command)
+
 export_command = Type("Meta", "export")
 export_command.set_attributes(["outputs_data"])
 implemented_commands.append(export_command)
@@ -105,16 +111,26 @@ fields_command = Type("Projection", "fields")
 implemented_commands.append(fields_command)
 
 fieldformat_command = Type("TransformingProjection", "fieldformat")
-fieldformat_command.set_attributes(["function_of_same_row",
+fieldformat_command.set_attributes(["function_of_same_entry",
                                         "string_domain",
                                         "string_range"])
 implemented_commands.append(fieldformat_command)
 
+filldown_command = Type("TransformingProjection", "filldown")
+filldown_command.set_attributes(["function_of_other_rows",
+                                 "function_of_same_column",
+                                 "null_domain",
+                                 "non_null_range"])
+implemented_commands.append(filldown_command)
+
 fillnull_command = Type("TransformingProjection", "fillnull")
-fillnull_command.set_attributes(["function_of_same_row", 
+fillnull_command.set_attributes(["function_of_same_entry", 
                                     "null_domain", 
                                     "user_defined_range"])
 implemented_commands.append(fillnull_command)
+
+gauge_command = Type("ExtendedProjection", "gauge")
+implemented_commands.append(gauge_command)
 
 head_command = Type("FilterSelection", "head")
 head_command.set_attributes(["by_index"])
@@ -161,18 +177,31 @@ macro_command = Type("Macro", "macro")
 implemented_commands.append(macro_command)
 
 makemv_command = Type("TransformingProjection", "makemv")
-makemv_command.set_attributes(["function_of_same_row",
+makemv_command.set_attributes(["function_of_same_entry",
                                 "string_domain"])
 implemented_commands.append(makemv_command)
+
+map_command = Type("Miscellaneous", "map")
+implemented_commands.append(map_command)
 
 multikv_command = Type("TransformingProjection", "multikv")
 multikv_command.set_attributes(["string_domain",
                                 "string_range"])
 implemented_commands.append(multikv_command)
 
+mvcombine_command = Type("Aggregation", "mvcombine")
+implemented_commands.append(mvcombine_command)
+
 mvexpand_command = Type("InputtingSelection", "mvexpand")
 mvexpand_command.set_attributes(["inputs_from_current_data"])
 implemented_commands.append(mvexpand_command)
+
+outlier_command = Type("TransformingProjection", "outlier")
+outlier_command.set_attributes(["function_of_other_rows",
+                                "function_of_same_entry",
+                                "numeric_domain",
+                                "numeric_range"])
+implemented_commands.append(outlier_command)
 
 outputcsv_command = Type("Meta", "outputcsv")
 outputcsv_command.set_attributes(["outputs_data"])
@@ -184,6 +213,9 @@ implemented_commands.append(outputlookup_command)
 
 overlap_command = Type("Miscellaneous", "overlap")
 implemented_commands.append(overlap_command)
+
+rangemap_command = Type("ExtendedProjection", "rangemap")
+implemented_commands.append(rangemap_command)
 
 rare_command = Type("Aggregation", "rare")
 rare_command.set_attributes(["reorders",
@@ -206,7 +238,7 @@ rename_command = Type("Rename", "rename")
 implemented_commands.append(rename_command)
 
 replace_command = Type("TransformingProjection", "replace")
-replace_command.set_attributes(["function_of_same_row",
+replace_command.set_attributes(["function_of_same_entry",
                                     "string_domain",
                                     "string_range"])
 implemented_commands.append(replace_command)
@@ -214,6 +246,9 @@ implemented_commands.append(replace_command)
 rest_command = Type("InputtingSelection", "rest")
 rest_command.set_attributes(["inputs_external_data"])
 implemented_commands.append(rest_command)
+
+return_command = Type("Miscellaneous", "return")
+implemented_commands.append(return_command)
 
 reverse_command = Type("Reorder", "reverse")
 implemented_commands.append(reverse_command)
@@ -240,10 +275,33 @@ implemented_commands.append(sendemail_command)
 sort_command = Type("Reorder", "sort")
 implemented_commands.append(sort_command)
 
+stats_command = Type("Aggregation", "stats")
+implemented_commands.append(stats_command)
+
 strcat_command = Type("ExtendedProjection", "strcat")
 strcat_command.set_attributes(["string_function",
                                 "function_of_multiple_columns"])
 implemented_commands.append(strcat_command)
+
+streamstats_command = Type("WindowingProjection", "streamstats")
+implemented_commands.append(streamstats_command)
+
+sistats_command = Type("Aggregation", "sistats")
+implemented_commands.append(sistats_command)
+
+sitimechart_command = Type("Aggregation", "sitimechart")
+sitimechart_command.set_attributes(["visualization_component"])
+implemented_commands.append(sitimechart_command)
+
+sitop_command = Type("Aggregation", "sitop")
+sitop_command.set_attributes(["reorders",
+                              "applies_fixed_function"])
+implemented_commands.append(sitop_command)
+
+spath_command = Type("ExtendedProjection", "spath")
+spath_command.set_attributes(["string_function",
+                              "function_of_single_columns"])
+implemented_commands.append(spath_command)
 
 table_command = Type("Projection", "table")
 table_command.set_attributes(["also_formats"])
@@ -264,36 +322,19 @@ timechart_command = Type("Aggregation", "timechart")
 timechart_command.set_attributes(["visualization_component"])
 implemented_commands.append(timechart_command)
 
-stats_command = Type("Aggregation", "stats")
-implemented_commands.append(stats_command)
-
-streamstats_command = Type("Aggregation", "streamstats")
-implemented_commands.append(streamstats_command)
-
-sistats_command = Type("Aggregation", "sistats")
-implemented_commands.append(sistats_command)
-
-sitimechart_command = Type("Aggregation", "sitimechart")
-sitimechart_command.set_attributes(["visualization_component"])
-implemented_commands.append(sitimechart_command)
-
 top_command = Type("Aggregation", "top")
 top_command.set_attributes(["reorders",
                             "applies_fixed_function"])
 implemented_commands.append(top_command)
 
-sitop_command = Type("Aggregation", "sitop")
-sitop_command.set_attributes(["reorders",
-                              "applies_fixed_function"])
-implemented_commands.append(sitop_command)
-
-spath_command = Type("ExtendedProjection", "spath")
-spath_command.set_attributes(["string_function",
-                              "function_of_single_columns"])
-implemented_commands.append(spath_command)
+transaction_command = Type("Aggregation", "transaction")
+implemented_commands.append(transaction_command)
 
 transpose_command = Type("Transpose", "transpose")
 implemented_commands.append(transpose_command)
+
+tstats_command = Type("Aggregation", "tstats")
+implemented_commands.append(tstats_command)
 
 typeahead_command = Type("InputtingSelection", "typeahead")
 typeahead_command.set_attributes(["inputs_metadata"])

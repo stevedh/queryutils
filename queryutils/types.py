@@ -16,9 +16,10 @@ class Type(object):
         "ExtendedProjection" :                  7,
         "WindowingProjection" :                 8,
         "Join" :                                9,
-        "Aggregation" :                         10, 
-        "ComplexAggregation" :                  11, 
-        "Transpose" :                           12
+        "Union" :                               10,
+        "Aggregation" :                         11, 
+        "ComplexAggregation" :                  12, 
+        "Transpose" :                           13
     }
 
     def __init__(self, type, name):
@@ -138,10 +139,13 @@ class Type(object):
 
         * additional column(s) in each row that is function of other column(s) in same row 
         + addtotals row=True
+        - bin (alias for bucket)
+        - bucket
         + extract (kv)
+        - eventstats
         kvform
         outputtext - this is a confusing name since it doesn't do what outputcsv does
-        rangemap
+        - rangemap
         reltime
         + rex
         + strcat
@@ -195,13 +199,14 @@ class Type(object):
         autoregress
         concurrency
         - delta
-        streamstats
+        - gauge
+        - streamstats
         trendline
         
         * additional column in each row that is function of a subset of previous rows, optionally after an aggregation 
          f( { r_i : (c_1,...,c_k), ..., r_j : (c_1,..,c_k) } ) 
              = { r_i : (c_1,...,c_k, c_k+1 = g(r_i)), ..., r_j : (c_1,..,c_k, c_k+1 = g(r_i,...r_j-1)) }
-        anomalies
+        - anomalies
         """
         def __init__(self):
             pass
@@ -214,9 +219,9 @@ class Type(object):
         """
         * transform entries based on function of same entry and optionally user input
         f( r_data, c_data ) = v 
-        - convert (g(x) = int(x)
+        - convert (g(x) = int(x))
         - fieldformat
-        - fillnull (g(x) = not null)
+        - fillnull (g(x) = not null))
         nomv
         - makemv
         - multikv
@@ -226,20 +231,17 @@ class Type(object):
         xmlunescape (g(x) = unescaped x)
 
         * transform entries based on function of other entries in the same column in all rows
-        - bin (alias for bucket)
-        - bucket
         bucketdir
-        outlier
+        - outlier
 
         * transform entries based on function of other entries in the same column in prior rows
-        filldown
+        - filldown
         """
 
         def __init__(self):
-            self.function_of_same_entry = False     # convert, 
-            self.function_of_same_row = False       # convert, fieldformat, 
-                                                    # fillnull, makemv, replace
-            self.function_of_other_rows = False     # bucket, bin
+            self.function_of_same_entry = False     # convert, bucket, bin, fieldformat, fillnull, makemv, replace
+            self.function_of_same_column = False    # filldown 
+            self.function_of_other_rows = False     # bucket, bin, filldown
 
             self.string_domain = False              # convert, fieldformat, makemv, replace
             self.string_range = False               # fieldformat, replace
@@ -249,11 +251,13 @@ class Type(object):
             
             self.range_domain = False               # bucket, bin
             
-            self.null_domain = False                # fillnull
+            self.null_domain = False                # fillnull, filldown
             self.user_defined_range = False         # fillnull
+            self.non_null_range = False             # filldown
 
         def varstring(self):
-            attrs = [self.function_of_same_row, 
+            attrs = [self.function_of_same_entry, 
+                        self.function_of_same_column, 
                         self.function_of_other_rows, 
                         self.string_domain,
                         self.string_range,
@@ -261,6 +265,7 @@ class Type(object):
                         self.numeric_range,
                         self.range_domain,
                         self.null_domain,
+                        self.non_null_range,
                         self.user_defined_range]
             attrs = [str(int(attr)) for attr in attrs]
             return ''.join(attrs)
@@ -300,6 +305,8 @@ class Type(object):
         - stats
         - sistats
         - streamstats
+        - eventcount
+        - mvcombine
         """
         def __init__(self):
             self.visualization_component = False    # chart, sichart,
@@ -320,7 +327,7 @@ class Type(object):
         """
         * additional column in each row that is function of other column(s) in all rows and possibly user input
         erex
-        eventstats
+        - eventstats
         predict
         x11
 
@@ -360,7 +367,11 @@ class Type(object):
    
     class Miscellaneous(object):
         """
-        - unclear how to categorize: abstract, overlap
+        - unclear how to categorize
+        abstract
+        - map
+        overlap
+        - return
         """
         def __init__(self):
             pass
@@ -419,10 +430,13 @@ class Type(object):
         * additional rows with possibly same or possibly different columns that is any function of anything
         append
         appendpipe
-
-        set union
-
         """
+        
+        def __init__(self):
+            pass
+
+        def varstring(self):
+            return ""
     
     class Difference(object):
         """
