@@ -356,9 +356,39 @@ xmlkv_command.set_attributes(["string_function",
 implemented_commands.append(xmlkv_command)
 
 implemented_commands.sort()
-#print [str(c) for c in implemented_commands]
-   
+ 
 names = [c.name for c in implemented_commands]
 types = [c.typestr for c in implemented_commands]
 command_type_lookup = dict(zip(names, types))
 
+def lookup_category(stagenode):
+    command = stagenode.children[0].raw
+    if command == "addtotals":
+        command = detect_addtotals_type(stagenode)
+    return command_type_lookup.get(command, None)
+
+def detect_addtotals_type(stagenode):
+    optionnodes = []
+    for node in stagenode.itertree():
+        if node.role == "EQ" and node.children[0].role == "OPTION":
+            optionnodes.append(node)
+    for optionnode in optionnodes:
+        paramnode = optionnode.children[0]
+        valuenode = optionnode.children[1]
+        value = detect_truth_value(valuenode.raw)
+        if value and paramnode.raw == "col":
+            return "addtotals col"
+        if value and paramnode.raw == "row":
+            return "addtotals row"
+    return "addtotals row"
+    
+def detect_truth_value(astring):
+    value = False
+    if astring.lower() in ["true", "t"]:
+        value = True
+    else:   
+        try:
+            value = float(valuenode.raw)
+        except:
+            pass
+    return value
