@@ -55,8 +55,7 @@ chart_command = Type("Aggregation", "chart")
 chart_command.set_attributes(["visualization_component"])
 implemented_commands.append(chart_command)
 
-sichart_command = Type("Aggregation", "sichart")
-sichart_command.set_attributes(["visualization_component"])
+sichart_command = Type("Meta", "sichart")
 implemented_commands.append(sichart_command)
 
 collect_command = Type("Meta", "collect")
@@ -222,9 +221,7 @@ rare_command.set_attributes(["reorders",
                                 "applies_fixed_function"])
 implemented_commands.append(rare_command)
 
-sirare_command = Type("Aggregation", "sirare")
-sirare_command.set_attributes(["reorders",
-                                "applies_fixed_function"])
+sirare_command = Type("Meta", "sirare")
 implemented_commands.append(sirare_command)
 
 regex_command = Type("FilterSelection", "regex")
@@ -286,16 +283,13 @@ implemented_commands.append(strcat_command)
 streamstats_command = Type("WindowingProjection", "streamstats")
 implemented_commands.append(streamstats_command)
 
-sistats_command = Type("Aggregation", "sistats")
+sistats_command = Type("Meta", "sistats")
 implemented_commands.append(sistats_command)
 
-sitimechart_command = Type("Aggregation", "sitimechart")
-sitimechart_command.set_attributes(["visualization_component"])
+sitimechart_command = Type("Meta", "sitimechart")
 implemented_commands.append(sitimechart_command)
 
-sitop_command = Type("Aggregation", "sitop")
-sitop_command.set_attributes(["reorders",
-                              "applies_fixed_function"])
+sitop_command = Type("Meta", "sitop")
 implemented_commands.append(sitop_command)
 
 spath_command = Type("ExtendedProjection", "spath")
