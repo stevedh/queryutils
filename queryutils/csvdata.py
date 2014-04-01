@@ -7,19 +7,25 @@ import splparser.parser
 from user import *
 from query import *
 
+from logging import getLogger as get_logger
 from os import path
-
 from splparser.exceptions import SPLSyntaxError, TerminatingSPLSyntaxError
+
 
 BYTES_IN_MB = 1048576
 LIMIT = 2000*BYTES_IN_MB
 
+logger = get_logger("queryutils")
+
+
 def get_users_from_file(filename):
+    logger.debug("Reading from file:" + filename)
     first = True
     users = {}
     with open(filename) as datafile:
         reader = csv.DictReader(datafile)
         for row in reader:
+            logger.debug("Attempting to read row.")
             username = row.get('user', None)
             if username is not None:
                 username = unicode(username.decode("utf-8"))
@@ -92,16 +98,17 @@ def get_users_from_file(filename):
             query = Query(query_string, timestamp, user, searchtype, 
                             search_et, search_lt, range, 
                             is_realtime, splunk_id, runtime, savedsearch_name) 
-
+            
             if not username in users:
                 users[username] = user
             users[username].queries.append(query)
-    return [users.values()]
+            logger.debug("Successfully read query.")
+    return users.values()
 
 def get_users_from_directory(directory, limit=LIMIT):
     raw_data_files = get_csv_files(directory, limit=limit)
     for f in raw_data_files:
-        return get_users_from_file(f)
+        yield get_users_from_file(f)
 
 def get_csv_files(dir, limit=LIMIT):
     csv_files = []

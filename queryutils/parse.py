@@ -1,7 +1,7 @@
 
 from splparser import parse as splparse
 from .query import *
-
+from logging import getLogger as get_logger
 import re
 
 ESCAPED_SLASH_STANDIN = "~#$slash$#~"
@@ -9,6 +9,8 @@ ESCAPED_SQUOTE_STANDIN = "~#$squote$#~"
 ESCAPED_DQUOTE_STANDIN = "~#$dquote$#~"
 SQID_MARKER = "~#$sqid$#~"
 DQID_MARKER = "~#$dqid$#~"
+
+logger = get_logger("queryutils")
 
 def extract_schema(query):
     parsetree = parse_query(query)
@@ -27,13 +29,17 @@ def tag_parseable(query):
         query.parseable = True
 
 def parse_query(query):
+    text = ""
     if isinstance(query, Query):
-        q = unicode(query.text).strip() 
+        text = query.text
+        q = unicode(text).strip() 
     else:
-        q = unicode(query).strip()
+        text = query
+        q = unicode(text).strip()
     try:
         parsetree = splparse(q)
     except:
+        logger.exception("Failed to parse query: " + text)
         return None
     return parsetree
 
