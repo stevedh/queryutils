@@ -46,13 +46,13 @@ def extract_sessions(users, version=Version.UNDIAG_2014):
 
 def remove_autorecurring_queries_by_searchtype(user, version=Version.UNDIAG_2014):
     if version == Version.UNDIAG_2014:
-        searchtype = "scheduled"
+        handgenerated = "adhoc"
     elif version in [Version.UNDIAG_2012, Version.STORM_2013]:
-        searchtype = "historical"
+        handgenerated = "historical"
     else:
         print "Unknown data version -- please provide a known version." # TODO: Raise error.
-    user.autorecurring_queries = filter(lambda x: not x.searchtype == searchtype, user.queries)
-    user.queries = filter(lambda x: x.searchtype == searchtype, user.queries)
+    user.autorecurring_queries = [query in user.queries if query.searchtype != handgenerated]
+    user.queries = [query in user.queries if query.searchtype == handgenerated]
 
 def remove_autorecurring_queries_by_time(user):
     unique_queries = defaultdict(list)
