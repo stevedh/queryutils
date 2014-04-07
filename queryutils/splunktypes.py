@@ -41,8 +41,10 @@ appendcols_command.set_attributes(["function_with_user_input_params",
                                    "data_dependent_num_columns_added"])
 implemented_commands.append(appendcols_command)
 
-audit_command = Type("InputtingSelection", "audit")
-audit_command.set_attributes(["inputs_metadata"])
+appendpipe_command = Type("Union", "appendpipe")
+implemented_commands.append(appendpipe_command)
+
+audit_command = Type("InputMetadata", "audit")
 implemented_commands.append(audit_command)
 
 bin_command = Type("ExtendedProjection", "bin") # alias for bucket
@@ -55,11 +57,7 @@ chart_command = Type("Aggregation", "chart")
 chart_command.set_attributes(["visualization_component"])
 implemented_commands.append(chart_command)
 
-sichart_command = Type("Meta", "sichart")
-implemented_commands.append(sichart_command)
-
-collect_command = Type("Meta", "collect")
-collect_command.set_attributes(["outputs_data"])
+collect_command = Type("Cache", "collect")
 implemented_commands.append(collect_command)
 
 convert_command = Type("TransformingProjection", "convert")
@@ -67,6 +65,12 @@ convert_command.set_attributes(["function_of_same_entry",
                                     "string_domain",
                                     "numeric_range"])
 implemented_commands.append(convert_command)
+
+datamodel_command = Type("InputtingSelection", "datamodel")
+implemented_commands.append(datamodel_command)
+
+dbinspect_command = Type("InputMetadata", "dbinspect")
+implemented_commands.append(dbinspect_command)
 
 dedup_command = Type("FilterSelection", "dedup")
 dedup_command.set_attributes(["by_other_row_match", 
@@ -95,8 +99,7 @@ implemented_commands.append(eventstats_command)
 eventcount_command = Type("Aggregation", "eventcount")
 implemented_commands.append(eventcount_command)
 
-export_command = Type("Meta", "export")
-export_command.set_attributes(["outputs_data"])
+export_command = Type("Output", "export")
 implemented_commands.append(export_command)
 
 extract_command = Type("ExtendedProjection", "extract")
@@ -135,7 +138,7 @@ head_command = Type("FilterSelection", "head")
 head_command.set_attributes(["by_index"])
 implemented_commands.append(head_command)
 
-history_command = Type("InputtingSelection", "history")
+history_command = Type("InputMetadata", "history")
 history_command.set_attributes(["inputs_metadata"])
 implemented_commands.append(history_command)
 
@@ -146,6 +149,12 @@ implemented_commands.append(inputlookup_command)
 inputcsv_command = Type("InputtingSelection", "inputcsv")
 inputcsv_command.set_attributes(["inputs_external_data"])
 implemented_commands.append(inputcsv_command)
+
+iplocation_command = Type("ExtendedProjection", "iplocation")
+implemented_commands.append(iplocation_command)
+
+geostats_command = Type("Aggregation", "geostats")
+implemented_commands.append(geostats_command)
 
 join_command = Type("Join", "join")
 implemented_commands.append(join_command)
@@ -183,6 +192,9 @@ implemented_commands.append(makemv_command)
 map_command = Type("Miscellaneous", "map")
 implemented_commands.append(map_command)
 
+metasearch_command = Type("Meta", "metasearch")
+implemented_commands.append(metasearch_command)
+
 multikv_command = Type("TransformingProjection", "multikv")
 multikv_command.set_attributes(["string_domain",
                                 "string_range"])
@@ -195,6 +207,11 @@ mvexpand_command = Type("InputtingSelection", "mvexpand")
 mvexpand_command.set_attributes(["inputs_from_current_data"])
 implemented_commands.append(mvexpand_command)
 
+nomv_command = Type("TransformingProjection", "nomv")
+nomv_command.set_attributes(["string_domain",
+                                "string_range"])
+implemented_commands.append(nomv_command)
+
 outlier_command = Type("TransformingProjection", "outlier")
 outlier_command.set_attributes(["function_of_other_rows",
                                 "function_of_same_entry",
@@ -202,13 +219,14 @@ outlier_command.set_attributes(["function_of_other_rows",
                                 "numeric_range"])
 implemented_commands.append(outlier_command)
 
-outputcsv_command = Type("Meta", "outputcsv")
-outputcsv_command.set_attributes(["outputs_data"])
+outputcsv_command = Type("Output", "outputcsv")
 implemented_commands.append(outputcsv_command)
 
-outputlookup_command = Type("Meta", "outputlookup")
-outputlookup_command.set_attributes(["outputs_data"])
+outputlookup_command = Type("Output", "outputlookup")
 implemented_commands.append(outputlookup_command)
+
+outputtext_command = Type("ExtendedProjection", "outputtext")
+implemented_commands.append(outputtext_command)
 
 overlap_command = Type("Miscellaneous", "overlap")
 implemented_commands.append(overlap_command)
@@ -220,9 +238,6 @@ rare_command = Type("Aggregation", "rare")
 rare_command.set_attributes(["reorders",
                                 "applies_fixed_function"])
 implemented_commands.append(rare_command)
-
-sirare_command = Type("Meta", "sirare")
-implemented_commands.append(sirare_command)
 
 regex_command = Type("FilterSelection", "regex")
 regex_command.set_attributes(["by_user_string_match"])
@@ -265,12 +280,34 @@ search_command.set_attributes(["by_user_string_match",
                                 "by_boolean_statement"])
 implemented_commands.append(search_command)
 
-sendemail_command = Type("Meta", "sendemail")
-sendemail_command.set_attributes(["outputs_data"])
+sendemail_command = Type("Output", "sendemail")
 implemented_commands.append(sendemail_command)
+
+set_command = Type("Union", "set")
+implemented_commands.append(set_command)
+
+sichart_command = Type("Cache", "sichart")
+implemented_commands.append(sichart_command)
+
+sirare_command = Type("Cache", "sirare")
+implemented_commands.append(sirare_command)
+
+sistats_command = Type("Cache", "sistats")
+implemented_commands.append(sistats_command)
+
+sitimechart_command = Type("Cache", "sitimechart")
+implemented_commands.append(sitimechart_command)
+
+sitop_command = Type("Cache", "sitop")
+implemented_commands.append(sitop_command)
 
 sort_command = Type("Reorder", "sort")
 implemented_commands.append(sort_command)
+
+spath_command = Type("ExtendedProjection", "spath")
+spath_command.set_attributes(["string_function",
+                              "function_of_single_columns"])
+implemented_commands.append(spath_command)
 
 stats_command = Type("Aggregation", "stats")
 implemented_commands.append(stats_command)
@@ -282,20 +319,6 @@ implemented_commands.append(strcat_command)
 
 streamstats_command = Type("WindowingProjection", "streamstats")
 implemented_commands.append(streamstats_command)
-
-sistats_command = Type("Meta", "sistats")
-implemented_commands.append(sistats_command)
-
-sitimechart_command = Type("Meta", "sitimechart")
-implemented_commands.append(sitimechart_command)
-
-sitop_command = Type("Meta", "sitop")
-implemented_commands.append(sitop_command)
-
-spath_command = Type("ExtendedProjection", "spath")
-spath_command.set_attributes(["string_function",
-                              "function_of_single_columns"])
-implemented_commands.append(spath_command)
 
 table_command = Type("Projection", "table")
 table_command.set_attributes(["also_formats"])
@@ -327,11 +350,13 @@ implemented_commands.append(transaction_command)
 transpose_command = Type("Transpose", "transpose")
 implemented_commands.append(transpose_command)
 
+tscollect_command = Type("Cache", "tscollect")
+implemented_commands.append(tscollect_command)
+
 tstats_command = Type("Aggregation", "tstats")
 implemented_commands.append(tstats_command)
 
-typeahead_command = Type("InputtingSelection", "typeahead")
-typeahead_command.set_attributes(["inputs_metadata"])
+typeahead_command = Type("InputMetadata", "typeahead")
 implemented_commands.append(typeahead_command)
 
 where_command = Type("FilterSelection", "where")
@@ -356,6 +381,8 @@ types = [c.typestr for c in implemented_commands]
 command_type_lookup = dict(zip(names, types))
 
 def lookup_category(stagenode):
+    if type(stagenode) == type(""):
+        return command_type_lookup.get(stagenode, None)
     command = stagenode.children[0].raw
     if command == "addtotals":
         command = detect_addtotals_type(stagenode)

@@ -1,4 +1,8 @@
 
+"""
+IMPORTANT NOTICE: This module is very out of date and the provided classes no longer apply.
+"""
+
 import inspect
 
 class Type(object):
@@ -19,13 +23,16 @@ class Type(object):
         "Union" :                               10,
         "Aggregation" :                         11, 
         "ComplexAggregation" :                  12, 
-        "Transpose" :                           13
+        "Transpose" :                           13,
+        "Output" :                              14,
+        "InputMetadata" :                       15,
+        "Cache" :                               16,
     }
 
     def __init__(self, type, name):
         self.typestr = type
         self.type = self._init_type(type)
-        self.rank = Type.ranks[type]
+        self.rank = Type.ranks.get(type, None)
         self.name = name
 
     def _init_type(self, type):
@@ -431,6 +438,35 @@ class Type(object):
         append
         appendpipe
         """
+        
+        def __init__(self):
+            pass
+
+        def varstring(self):
+            return ""
+    
+    class Output(object):
+        """
+        * additional rows with possibly same or possibly different columns that is any function of anything
+        append
+        appendpipe
+        """
+        
+        def __init__(self):
+            pass
+
+        def varstring(self):
+            return ""
+
+    class InputMetadata(object):
+        
+        def __init__(self):
+            pass
+
+        def varstring(self):
+            return ""
+    
+    class Cache(object):
         
         def __init__(self):
             pass
