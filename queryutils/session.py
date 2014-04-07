@@ -51,8 +51,8 @@ def remove_autorecurring_queries_by_searchtype(user, version=Version.UNDIAG_2014
         handgenerated = "historical"
     else:
         print "Unknown data version -- please provide a known version." # TODO: Raise error.
-    user.autorecurring_queries = [query in user.queries if query.searchtype != handgenerated]
-    user.queries = [query in user.queries if query.searchtype == handgenerated]
+    user.autorecurring_queries = [query for query in user.queries if query.searchtype != handgenerated]
+    user.queries = [query for query in user.queries if query.searchtype == handgenerated]
 
 def remove_autorecurring_queries_by_time(user):
     unique_queries = defaultdict(list)
