@@ -19,7 +19,7 @@ addtotalscol_command = Type("Aggregation", "addtotals col")
 addtotalscol_command.set_attributes(["applies_fixed_function"])
 implemented_commands.append(addtotalscol_command)
 
-addcoltotals_command = Type("Aggregation", "addtotals col")
+addcoltotals_command = Type("Aggregation", "addcoltotals")
 addcoltotals_command.set_attributes(["applies_fixed_function"])
 implemented_commands.append(addcoltotals_command)
 
@@ -243,7 +243,7 @@ regex_command = Type("FilterSelection", "regex")
 regex_command.set_attributes(["by_user_string_match"])
 implemented_commands.append(regex_command)
 
-relevancy_command = Type("ComplexAggregation", "relevancy")
+relevancy_command = Type("ExtendedProjection", "relevancy")
 implemented_commands.append(relevancy_command)
 
 rename_command = Type("Rename", "rename")
