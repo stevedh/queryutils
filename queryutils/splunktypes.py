@@ -1,4 +1,5 @@
 from .types import *
+from splparser.parsetree import ParseTreeNode
 
 implemented_commands = []
 
@@ -381,12 +382,12 @@ types = [c.typestr for c in implemented_commands]
 command_type_lookup = dict(zip(names, types))
 
 def lookup_category(stagenode):
-    if type(stagenode) == type(""):
-        return command_type_lookup.get(stagenode, None)
+    if not isinstance(stagenode, ParseTreeNode):
+        return command_type_lookup[stagenode]
     command = stagenode.children[0].raw
     if command == "addtotals":
         command = detect_addtotals_type(stagenode)
-    return command_type_lookup.get(command, None)
+    return command_type_lookup[command]
 
 def detect_addtotals_type(stagenode):
     optionnodes = []
